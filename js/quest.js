@@ -103,111 +103,110 @@ $(document).ready(function () {
     //******************* Moviment *****************************/
     //**********************************************************/
 
-    // Fletxes amunt i avall sense utilitzar jQuery
-    let fletxaAmunt = document.getElementsByClassName('up')[0];
-    let fletxaAvall = document.getElementsByClassName('down')[0];
+//**********************************************************/
+//******************* Moviment *****************************/
+//**********************************************************/
 
-    //Afegim esdeveniments
-    fletxaAmunt.addEventListener('click', function(){
-        let pers = document.getElementsByClassName('personatge')[0];
-        //Quan ens movem amunt canviem a la secció anterior (comprovem que hi haja una secció més amunt)
-        if(pers.parentNode.parentNode.previousElementSibling){
-            //Obtenim la posició del <div> on es troba personatge dintre dels <div> del <section>
-            let posX = Array.from(pers.parentNode.parentNode.children).indexOf(pers.parentNode);
-            console.log(posX);
+// Fletxes amunt i avall sense utilitzar jQuery
+let fletxaAmunt = document.getElementsByClassName('up')[0];
+let fletxaAvall = document.getElementsByClassName('down')[0];
 
-            //Agafem l'element de la nova posició
-            let elemNovaPosicio = pers.parentNode.parentNode.previousElementSibling.children[posX];
-            
-            //Comprovem si hi ha roca a la nova posició
-            let hiHaRoca = comprovarRoca(elemNovaPosicio);
+//Afegim esdeveniments per clic
+fletxaAmunt.addEventListener('click', moureAmunt);
+fletxaAvall.addEventListener('click', moureAvall);
 
-            //Passem l'element del DOM a element jQuery, ja que la funció comprovarMoneda està feta en jQuery
-            comprovarMoneda($(elemNovaPosicio));
+// Fletxes esquerra i dreta utilitzant jQuery
+let $fletxaDreta = $('.right');
+let $fletxaEsquerra = $('.left');
 
-            let hiHaPortal = comprovarPortal(elemNovaPosicio);
+//Afegim esdeveniments per clic
+$fletxaDreta.on('click', moureDreta);
+$fletxaEsquerra.on('click', moureEsquerra);
 
-            if(!hiHaRoca && !hiHaPortal){
-                elemNovaPosicio.append(pers);
-            }
-            
+// Afegim esdeveniment per a teclat
+document.addEventListener('keydown', (event) => {
+    switch (event.key) {
+        case "ArrowUp":
+            moureAmunt();
+            break;
+        case "ArrowDown":
+            moureAvall();
+            break;
+        case "ArrowLeft":
+            moureEsquerra();
+            break;
+        case "ArrowRight":
+            moureDreta();
+            break;
+    }
+});
+
+// Funció per moure amunt
+function moureAmunt() {
+    let pers = document.getElementsByClassName('personatge')[0];
+    if (pers.parentNode.parentNode.previousElementSibling) {
+        let posX = Array.from(pers.parentNode.parentNode.children).indexOf(pers.parentNode);
+        let elemNovaPosicio = pers.parentNode.parentNode.previousElementSibling.children[posX];
+
+        let hiHaRoca = comprovarRoca(elemNovaPosicio);
+        comprovarMoneda($(elemNovaPosicio));
+        let hiHaPortal = comprovarPortal(elemNovaPosicio);
+
+        if (!hiHaRoca && !hiHaPortal) {
+            elemNovaPosicio.append(pers);
         }
-    })
+    }
+}
 
-    fletxaAvall.addEventListener('click', () => {
-        let pers = document.getElementsByClassName('personatge')[0];
-        //Quan ens movem amunt canviem a la secció anterior (comprovem que hi haja una secció més amunt)
-        if(pers.parentNode.parentNode.nextElementSibling){
-            //Obtenim la posició del <div> on es troba el personatge dintre dels <div> del <section>
-            let posX = Array.from(pers.parentNode.parentNode.children).indexOf(pers.parentNode);
-            console.log(posX);
+// Funció per moure avall
+function moureAvall() {
+    let pers = document.getElementsByClassName('personatge')[0];
+    if (pers.parentNode.parentNode.nextElementSibling) {
+        let posX = Array.from(pers.parentNode.parentNode.children).indexOf(pers.parentNode);
+        let elemNovaPosicio = pers.parentNode.parentNode.nextElementSibling.children[posX];
 
-            //Agafem l'element de la nova posició
-            let elemNovaPosicio = pers.parentNode.parentNode.nextElementSibling.children[posX];
-            
-            //Comprovem si hi ha roca a la nova posició
-            let hiHaRoca = comprovarRoca(elemNovaPosicio);
+        let hiHaRoca = comprovarRoca(elemNovaPosicio);
+        comprovarMoneda($(elemNovaPosicio));
+        let hiHaPortal = comprovarPortal(elemNovaPosicio);
 
-            //Passem l'element del DOM a element jQuery, ja que la funció comprovarMoneda està feta en jQuery
-            comprovarMoneda($(elemNovaPosicio));
-
-            let hiHaPortal = comprovarPortal(elemNovaPosicio);
-
-            if(!hiHaRoca && !hiHaPortal){
-                elemNovaPosicio.append(pers);
-            }
+        if (!hiHaRoca && !hiHaPortal) {
+            elemNovaPosicio.append(pers);
         }
-    })
+    }
+}
 
-    // Fletxes esquerra i dreta utilitzant jQuery
-    $fletxaDreta = $('.right');
-    $fletxaEsquerra = $('.left');
+// Funció per moure dreta
+function moureDreta() {
+    let $pers = $('.personatge');
+    if ($pers.parent().next()) {
+        let $elemNovaPosicio = $pers.parent().next();
 
-    //Afegim esdeveniments
-    $fletxaDreta.on('click', () => {
-        //Moure a la dreta significa moure l'element al germà següent
-        //Obtenim personate
-        let $pers = $('.personatge');
-        if($pers.parent().next()){
+        let hiHaRoca = comprovarRoca($elemNovaPosicio.get(0));
+        comprovarMoneda($elemNovaPosicio);
+        let hiHaPortal = comprovarPortal($elemNovaPosicio.get(0));
 
-            //Agafem l'element de la nova posició
-            $elemNovaPosicio = $pers.parent().next();
-
-            //Comprovem si hi ha roca a la nova posició (passem l'objecte jQuery a objecte del DOM, ja que la funció comprovarRoca no usa jQuery)
-            let hiHaRoca = comprovarRoca($elemNovaPosicio.get(0));
-
-            comprovarMoneda($elemNovaPosicio);
-
-            let hiHaPortal = comprovarPortal($elemNovaPosicio.get(0));
-
-            if(!hiHaRoca && !hiHaPortal){
-                $elemNovaPosicio.append($pers);
-            }
-            
+        if (!hiHaRoca && !hiHaPortal) {
+            $elemNovaPosicio.append($pers);
         }
-    });
+    }
+}
 
-    $fletxaEsquerra.on('click', () => {
-        //Moure a l'esquerra significa moure l'element al germà anterior
-        //Obtenim personate
-        let $pers = $('.personatge');
-        if($pers.parent().prev()){
+// Funció per moure esquerra
+function moureEsquerra() {
+    let $pers = $('.personatge');
+    if ($pers.parent().prev()) {
+        let $elemNovaPosicio = $pers.parent().prev();
 
-            //Agafem l'element de la nova posició
-            $elemNovaPosicio = $pers.parent().prev();
+        let hiHaRoca = comprovarRoca($elemNovaPosicio.get(0));
+        comprovarMoneda($elemNovaPosicio);
+        let hiHaPortal = comprovarPortal($elemNovaPosicio.get(0));
 
-            //Comprovem si hi ha roca a la nova posició
-            let hiHaRoca = comprovarRoca($elemNovaPosicio.get(0));
-
-            comprovarMoneda($elemNovaPosicio);
-
-            let hiHaPortal = comprovarPortal($elemNovaPosicio.get(0));
-
-            if(!hiHaRoca && !hiHaPortal){
-                $elemNovaPosicio.append($pers);
-            }
+        if (!hiHaRoca && !hiHaPortal) {
+            $elemNovaPosicio.append($pers);
         }
-    });
+    }
+}
+
 
     //**********************************************************/
     //******************** Comprovar roca **********************/
